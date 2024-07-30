@@ -1,1 +1,1 @@
-A library for bounded numbers
+A library for bounded integers
