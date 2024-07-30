@@ -1,0 +1,18 @@
+[package]
+name = "bounded-nums"
+version = "0.1.0"
+edition = "2021"
+authors = [
+    "Mearkatz <drquinsey@gmail.com>",
+]
+description = "a library for bounded integers"
+license = "MIT"
+
+[lints.clippy]
+enum_glob_use = { level = "deny", priority = -2 }
+pedantic = { level = "deny", priority = -3 }
+nursery = { level = "deny", priority = -4 }
+unwrap_used = { level = "deny", priority = -5 }
+expect_used = { level = "deny", priority = -6 }
+
+[dependencies]
