@@ -1,6 +1,8 @@
 /// Creates a new `Bounded_*` with consts for the minimum and maximum value of an instance.
 macro_rules! bounded_impl {
     ($name: ident, $t: ty) => {
+        /// An integer which is known to exist in the range `MIN`..`MAX`
+        #[derive(Debug, Clone, Copy)]
         pub struct $name<const MIN: $t, const MAX: $t> {
             #[allow(dead_code)]
             value: $t,
