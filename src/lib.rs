@@ -25,7 +25,7 @@ macro_rules! bounded_impl {
             /// # Safety
             /// `value` must be known to be in the range `MIN..MAX`
             #[must_use]
-            const unsafe fn new_unchecked(value: $t) -> Self {
+            pub const unsafe fn new_unchecked(value: $t) -> Self {
                 Self { value }
             }
 
