@@ -3,5 +3,5 @@
 version = 3
 
 [[package]]
-name = "bounded-nums"
+name = "bounded-ints"
 version = "0.1.0"
