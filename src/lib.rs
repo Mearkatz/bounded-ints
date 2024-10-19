@@ -1,10 +1,10 @@
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Ord, PartialOrd)]
 pub enum BoundedError {
-    /// The value provided was less than the minimum.
-    LessThanMinimum,
+    ///  the value is < the minimum
+    LTMinimum,
 
-    /// The value provided was greater than the minimum.
-    GreaterThanMaximum,
+    /// the value is >= the maximum
+    GTEMaximum,
 }
 
 pub type BoundedResult<T> = Result<T, BoundedError>;
@@ -26,9 +26,9 @@ macro_rules! bounded_impl {
             /// - If `value` > `maximum` this returns `BoundedError::LessThanMinimum`.
             pub const fn new(value: $t) -> Result<Self, BoundedError> {
                 if value < MIN {
-                    Err(BoundedError::LessThanMinimum)
-                } else if value > MAX {
-                    Err(BoundedError::GreaterThanMaximum)
+                    Err(BoundedError::LTMinimum)
+                } else if value >= MAX {
+                    Err(BoundedError::GTEMaximum)
                 } else {
                     Ok(unsafe { Self::new_unchecked(value) })
                 }
@@ -86,9 +86,9 @@ where
     */
     pub fn new(value: T, minimum: T, maximum: T) -> Result<Self, BoundedError> {
         if value < minimum {
-            Err(BoundedError::LessThanMinimum)
-        } else if value > maximum {
-            Err(BoundedError::GreaterThanMaximum)
+            Err(BoundedError::LTMinimum)
+        } else if value >= maximum {
+            Err(BoundedError::GTEMaximum)
         } else {
             Ok(unsafe { Self::new_unchecked(value, minimum, maximum) })
         }
