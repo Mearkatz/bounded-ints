@@ -49,6 +49,12 @@ macro_rules! bounded_impl {
                 self.value
             }
         }
+
+        impl<const MIN: $t, const MAX: $t> std::fmt::Display for $name<MIN, MAX> {
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                write!(f, "{}", self.get())
+            }
+        }
     };
 }
 
@@ -112,5 +118,14 @@ where
     /// Returns a reference to the bounded value
     pub const fn get(&self) -> &T {
         &self.value
+    }
+}
+
+impl<T> std::fmt::Display for Bounded<T>
+where
+    T: std::fmt::Display,
+{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.value)
     }
 }
