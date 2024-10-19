@@ -7,7 +7,7 @@ pub enum BoundedError {
     GreaterThanMaximum,
 }
 
-type BoundedResult<T> = Result<T, BoundedError>;
+pub type BoundedResult<T> = Result<T, BoundedError>;
 
 /// Creates a new `Bounded_*` with consts for the minimum and maximum value of an instance.
 macro_rules! bounded_impl {
