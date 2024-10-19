@@ -1,4 +1,4 @@
-#[derive(Debug, Clone, PartialEq, Eq, Ord, PartialOrd)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Ord, PartialOrd)]
 pub enum BoundedError {
     /// The value provided was less than the minimum.
     LessThanMinimum,
@@ -6,6 +6,8 @@ pub enum BoundedError {
     /// The value provided was greater than the minimum.
     GreaterThanMaximum,
 }
+
+type BoundedResult<T> = Result<T, BoundedError>;
 
 /// Creates a new `Bounded_*` with consts for the minimum and maximum value of an instance.
 macro_rules! bounded_impl {
@@ -41,6 +43,7 @@ macro_rules! bounded_impl {
                 Self { value }
             }
 
+            /// Returns a copy of the bounded value.
             #[must_use]
             pub const fn get(self) -> $t {
                 self.value
@@ -60,7 +63,10 @@ bounded_impl!(BoundedI32, i32);
 bounded_impl!(BoundedI64, i64);
 bounded_impl!(BoundedI128, i128);
 
-/// An integer which is known to exist in the range `self.minimum`..`self.maximum`
+/**
+An integer which is known to exist in the range `self.minimum`..`self.maximum`
+Because of how generic this is almost none of this type's methods are `const`.
+*/
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Bounded<T> {
     minimum: T,
@@ -72,10 +78,12 @@ impl<T> Bounded<T>
 where
     T: PartialOrd + Ord,
 {
-    /// Creates a new `Self` from `value`.
-    /// # Errors
-    /// - If `value` < `minimum` this returns `BoundedError::LessThanMinimum`.
-    /// - If `value` > `maximum` this returns `BoundedError::LessThanMinimum`.
+    /**
+    Creates a new `Self` from `value`.
+    # Errors
+    - If `value` < `minimum` this returns `BoundedError::LessThanMinimum`.
+    - If `value` > `maximum` this returns `BoundedError::LessThanMinimum`.
+    */
     pub fn new(value: T, minimum: T, maximum: T) -> Result<Self, BoundedError> {
         if value < minimum {
             Err(BoundedError::LessThanMinimum)
@@ -86,10 +94,12 @@ where
         }
     }
 
-    /// Creates a new `Self` from `value`.
-    ///
-    /// # Safety
-    /// `value` must be known to be in the range `MIN..MAX`
+    /**
+    Creates a new `Self` from `value`.
+
+    # Safety
+    `value` must be known to be in the range `MIN..MAX`
+    */
     #[must_use]
     pub const unsafe fn new_unchecked(value: T, minimum: T, maximum: T) -> Self {
         Self {
@@ -97,5 +107,10 @@ where
             maximum,
             value,
         }
+    }
+
+    /// Returns a reference to the bounded value
+    pub const fn get(&self) -> &T {
+        &self.value
     }
 }
