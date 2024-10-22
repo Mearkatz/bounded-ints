@@ -1,131 +1,118 @@
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Ord, PartialOrd)]
-pub enum BoundedError {
-    ///  the value is < the minimum
-    LTMinimum,
+mod macros;
 
-    /// the value is >= the maximum
-    GTEMaximum,
+/// definitions for `InRangeU*` and `InRangeI*` types
+pub mod in_range {
+    use crate::in_range;
+    use derive_getters::Getters;
+    use derive_more::Display;
+
+    in_range!(u8, InRangeU8);
+    in_range!(u16, InRangeU16);
+    in_range!(u32, InRangeU32);
+    in_range!(u64, InRangeU64);
+    in_range!(u128, InRangeU128);
+    in_range!(usize, InRangeUsize);
+    in_range!(i8, InRangeI8);
+    in_range!(i16, InRangeI16);
+    in_range!(i32, InRangeI32);
+    in_range!(i64, InRangeI64);
+    in_range!(i128, InRangeI128);
+    in_range!(isize, InRangeIsize);
 }
 
-pub type BoundedResult<T> = Result<T, BoundedError>;
+/// definitions for `InRangeInclusiveU*` and `InRangeInclusiveI*` types
+pub mod in_range_inclusive {
+    use crate::in_range_inclusive;
+    use derive_getters::Getters;
+    use derive_more::Display;
 
-/// Creates a new `Bounded_*` with consts for the minimum and maximum value of an instance.
-macro_rules! bounded_impl {
-    ($name: ident, $t: ty) => {
-        /// An integer which is known to exist in the range `MIN`..`MAX`
-        #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-        pub struct $name<const MIN: $t, const MAX: $t> {
-            #[allow(dead_code)]
-            value: $t,
-        }
-
-        impl<const MIN: $t, const MAX: $t> $name<MIN, MAX> {
-            /// Creates a new `Self` from `value`.
-            /// # Errors
-            /// - If `value` < `minimum` this returns `BoundedError::LessThanMinimum`.
-            /// - If `value` > `maximum` this returns `BoundedError::LessThanMinimum`.
-            pub const fn new(value: $t) -> Result<Self, BoundedError> {
-                if value < MIN {
-                    Err(BoundedError::LTMinimum)
-                } else if value >= MAX {
-                    Err(BoundedError::GTEMaximum)
-                } else {
-                    Ok(unsafe { Self::new_unchecked(value) })
-                }
-            }
-
-            /// Creates a new `Self` from `value`.
-            ///
-            /// # Safety
-            /// `value` must be known to be in the range `MIN..MAX`
-            #[must_use]
-            pub const unsafe fn new_unchecked(value: $t) -> Self {
-                Self { value }
-            }
-
-            /// Returns a copy of the bounded value.
-            #[must_use]
-            pub const fn get(self) -> $t {
-                self.value
-            }
-        }
-
-        impl<const MIN: $t, const MAX: $t> std::fmt::Display for $name<MIN, MAX> {
-            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                write!(f, "{}", self.get())
-            }
-        }
-    };
+    in_range_inclusive!(u8, InRangeInclusiveU8);
+    in_range_inclusive!(u16, InRangeInclusiveU16);
+    in_range_inclusive!(u32, InRangeInclusiveU32);
+    in_range_inclusive!(u64, InRangeInclusiveU64);
+    in_range_inclusive!(u128, InRangeInclusiveU128);
+    in_range_inclusive!(usize, InRangeInclusiveUsize);
+    in_range_inclusive!(i8, InRangeInclusiveI8);
+    in_range_inclusive!(i16, InRangeInclusiveI16);
+    in_range_inclusive!(i32, InRangeInclusiveI32);
+    in_range_inclusive!(i64, InRangeInclusiveI64);
+    in_range_inclusive!(i128, InRangeInclusiveI128);
+    in_range_inclusive!(isize, InRangeInclusiveIsize);
 }
 
-bounded_impl!(BoundedU8, u8);
-bounded_impl!(BoundedU16, u16);
-bounded_impl!(BoundedU32, u32);
-bounded_impl!(BoundedU64, u64);
-bounded_impl!(BoundedU128, u128);
-bounded_impl!(BoundedI8, i8);
-bounded_impl!(BoundedI16, i16);
-bounded_impl!(BoundedI32, i32);
-bounded_impl!(BoundedI64, i64);
-bounded_impl!(BoundedI128, i128);
+/// definitions for `LTU*` and `LTI*` types
+pub mod lt {
+    use crate::lt;
+    use derive_getters::Getters;
+    use derive_more::Display;
 
-/**
-An integer which is known to exist in the range `self.minimum`..`self.maximum`
-Because of how generic this is almost none of this type's methods are `const`.
-*/
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-pub struct Bounded<T> {
-    minimum: T,
-    maximum: T,
-    value: T,
+    lt!(u8, LtU8);
+    lt!(u16, LtU16);
+    lt!(u32, LtU32);
+    lt!(u64, LtU64);
+    lt!(u128, LtU128);
+    lt!(usize, LtUsize);
+    lt!(i8, LtI8);
+    lt!(i16, LtI16);
+    lt!(i32, LtI32);
+    lt!(i64, LtI64);
+    lt!(i128, LtI128);
+    lt!(isize, LtIsize);
 }
 
-impl<T> Bounded<T>
-where
-    T: PartialOrd + Ord,
-{
-    /**
-    Creates a new `Self` from `value`.
-    # Errors
-    - If `value` < `minimum` this returns `BoundedError::LessThanMinimum`.
-    - If `value` > `maximum` this returns `BoundedError::LessThanMinimum`.
-    */
-    pub fn new(value: T, minimum: T, maximum: T) -> Result<Self, BoundedError> {
-        if value < minimum {
-            Err(BoundedError::LTMinimum)
-        } else if value >= maximum {
-            Err(BoundedError::GTEMaximum)
-        } else {
-            Ok(unsafe { Self::new_unchecked(value, minimum, maximum) })
-        }
-    }
+pub mod lte {
+    use crate::lte;
+    use derive_getters::Getters;
+    use derive_more::Display;
 
-    /**
-    Creates a new `Self` from `value`.
-
-    # Safety
-    `value` must be known to be in the range `MIN..MAX`
-    */
-    #[must_use]
-    pub const unsafe fn new_unchecked(value: T, minimum: T, maximum: T) -> Self {
-        Self {
-            minimum,
-            maximum,
-            value,
-        }
-    }
-
-    /// Returns a reference to the bounded value
-    pub const fn get(&self) -> &T {
-        &self.value
-    }
+    lte!(u8, LteU8);
+    lte!(u16, LteU16);
+    lte!(u32, LteU32);
+    lte!(u64, LteU64);
+    lte!(u128, LteU128);
+    lte!(usize, LteUsize);
+    lte!(i8, LteI8);
+    lte!(i16, LteI16);
+    lte!(i32, LteI32);
+    lte!(i64, LteI64);
+    lte!(i128, LteI128);
+    lte!(isize, LteIsize);
 }
 
-impl<T> std::fmt::Display for Bounded<T>
-where
-    T: std::fmt::Display,
-{
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.value)
-    }
+pub mod gt {
+    use crate::gt;
+    use derive_getters::Getters;
+    use derive_more::Display;
+
+    gt!(u8, GtU8);
+    gt!(u16, GtU16);
+    gt!(u32, GtU32);
+    gt!(u64, GtU64);
+    gt!(u128, GtU128);
+    gt!(usize, GtUsize);
+    gt!(i8, GtI8);
+    gt!(i16, GtI16);
+    gt!(i32, GtI32);
+    gt!(i64, GtI64);
+    gt!(i128, GtI128);
+    gt!(isize, GtIsize);
+}
+
+pub mod gte {
+    use crate::gte;
+    use derive_getters::Getters;
+    use derive_more::Display;
+
+    gte!(u8, GteU8);
+    gte!(u16, GteU16);
+    gte!(u32, GteU32);
+    gte!(u64, GteU64);
+    gte!(u128, GteU128);
+    gte!(usize, GteUsize);
+    gte!(i8, GteI8);
+    gte!(i16, GteI16);
+    gte!(i32, GteI32);
+    gte!(i64, GteI64);
+    gte!(i128, GteI128);
+    gte!(isize, GteIsize);
 }

@@ -16,3 +16,7 @@ unwrap_used = { level = "deny", priority = -5 }
 expect_used = { level = "deny", priority = -6 }
 
 [dependencies]
+derive-getters = "0.5.0"
+derive_more = { version = "1.0.0", features = [
+    "display",
+] }
