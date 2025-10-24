@@ -3,7 +3,7 @@ name = "bounded-ints"
 version = "0.1.3"
 edition = "2021"
 authors = [
-    "Mearkatz <drquinsey@gmail.com>",
+  "Mearkatz <drquinsey@gmail.com>",
 ]
 description = "a library for bounded integers"
 license = "MIT"
@@ -17,6 +17,7 @@ expect_used = { level = "deny", priority = -6 }
 
 [dependencies]
 derive-getters = "0.5.0"
-derive_more = { version = "1.0.0", features = [
-    "display",
+derive_more = { version = "2.0.1", features = [
+  "display",
 ] }
+then = { git = "https://github.com/Mearkatz/then", version = "0.1.1" }

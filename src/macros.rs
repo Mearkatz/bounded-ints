@@ -12,11 +12,7 @@ macro_rules! in_range {
             /// Creates a new `InRange` from `value` if it's in the range `MIN..MAX`
             #[must_use]
             pub const fn new(value: $t) -> Option<Self> {
-                if (value >= MIN) && (value < MAX) {
-                    Some(Self { value })
-                } else {
-                    None
-                }
+                then::then!((value >= MIN) && (value < MAX), Self { value })
             }
 
             /// Creates a new `InRange` from `value`.
@@ -45,17 +41,15 @@ macro_rules! in_range_inclusive {
             /// Creates a new `InRange` from `value` if it's in the range `MIN..=MAX`
             #[must_use]
             pub const fn new(value: $t) -> Option<Self> {
-                if (value >= MIN) && (value <= MAX) {
-                    Some(Self { value })
-                } else {
-                    None
-                }
+                then::then!((value >= MIN) && (value <= MAX), Self { value })
             }
 
-            /// Creates a new `InRange` from `value`.
-            ///
-            /// # Safety
-            /// `value` must be known to be in the range `MIN..=MAX`
+            /**
+            Creates a new `InRange` from `value`.
+
+            # Safety
+            `value` must be known to be in the range `MIN..=MAX`
+            */
             #[must_use]
             pub const unsafe fn new_unchecked(value: $t) -> Self {
                 Self { value }
@@ -78,17 +72,15 @@ macro_rules! lt {
             /// Creates a new `Lt` from `value` if it's < `MAX`
             #[must_use]
             pub const fn new(value: $t) -> Option<Self> {
-                if value < MAX {
-                    Some(Self { value })
-                } else {
-                    None
-                }
+                then::then!(value < MAX, Self { value })
             }
 
-            /// Creates a new `Lt` from `value`.
-            ///
-            /// # Safety
-            /// `value < MAX` must be known to be true.
+            /**
+            Creates a new `Lt` from `value`.
+
+            # Safety
+            `value < MAX` must be known to be true.
+            */
             #[must_use]
             pub const unsafe fn new_unchecked(value: $t) -> Self {
                 Self { value }
@@ -111,17 +103,15 @@ macro_rules! lte {
             /// Creates a new `Lt` from `value` if it's <= `MAX`
             #[must_use]
             pub const fn new(value: $t) -> Option<Self> {
-                if value <= MAX {
-                    Some(Self { value })
-                } else {
-                    None
-                }
+                then::then!(value <= MAX, Self { value })
             }
 
-            /// Creates a new `Lt` from `value`.
-            ///
-            /// # Safety
-            /// `value <= MAX` must be known to be true.
+            /**
+            Creates a new `Lt` from `value`.
+
+            # Safety
+            `value <= MAX` must be known to be true.
+            */
             #[must_use]
             pub const unsafe fn new_unchecked(value: $t) -> Self {
                 Self { value }
@@ -144,17 +134,15 @@ macro_rules! gt {
             /// Creates a new `Gt` from `value` if it's > `MIN`
             #[must_use]
             pub const fn new(value: $t) -> Option<Self> {
-                if value > MIN {
-                    Some(Self { value })
-                } else {
-                    None
-                }
+                then::then!(value > MIN, Self { value })
             }
 
-            /// Creates a new `Gt` from `value`.
-            ///
-            /// # Safety
-            /// `value > MIN` must be known to be true.
+            /**
+            Creates a new `Gt` from `value`.
+
+            # Safety
+            `value > MIN` must be known to be true.
+            */
             #[must_use]
             pub const unsafe fn new_unchecked(value: $t) -> Self {
                 Self { value }
@@ -177,11 +165,7 @@ macro_rules! gte {
             /// Creates a new `Gte` from `value` if it's >= `MIN`
             #[must_use]
             pub const fn new(value: $t) -> Option<Self> {
-                if value >= MIN {
-                    Some(Self { value })
-                } else {
-                    None
-                }
+                then::then!(value >= MIN, Self { value })
             }
 
             /// Creates a new `Gte` from `value`.
